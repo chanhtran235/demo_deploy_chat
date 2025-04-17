@@ -1,7 +1,6 @@
 package com.example.demo_chat.controller;
 
-import com.example.demo_chat.model.AppUser;
-import com.example.demo_chat.service.IAppUserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,8 +10,8 @@ import java.util.List;
 
 @Controller
 public class HomeController {
-    @Autowired
-    private IAppUserService appUserService;
+//    @Autowired
+//    private IAppUserService appUserService;
     @GetMapping("/login")
     public String login() {
         return "login";
@@ -29,8 +28,8 @@ public class HomeController {
     }
     @GetMapping("/home")
     public String home(Model model){
-        List<AppUser> list = appUserService.findAll();
-        model.addAttribute("list", list);
+//        List<AppUser> list = appUserService.findAll();
+//        model.addAttribute("list", list);
         return "home";
     }
 }
