@@ -7,5 +7,22 @@
 <p><a th:href="@{/user/profile}">User Profile</a></p>
 <p><a th:href="@{/logout}">Logout</a></p>
 <p><a th:href="@{/form-chat}">Gửi tin nhắn cho admin</a></p>
+
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+    <tr>
+        <th>ID</th>
+        <th>Tên người dùng</th>
+        <th>Mật khẩu</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user : ${list}">
+        <td th:text="${user.id}">1</td>
+        <td th:text="${user.username}">username</td>
+        <td th:text="${user.password}">password</td>
+    </tr>
+    </tbody>
+</table>
 </body>
 </html>
