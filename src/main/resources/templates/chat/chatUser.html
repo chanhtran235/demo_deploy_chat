@@ -34,6 +34,7 @@
     // Kết nối WebSocket
     const connect = () => {
         const socket = new SockJS(`https://web-production-fce3.up.railway.app/ws?sender=${sender}`);
+        // const socket = new SockJS(`http://localhost:8080/ws?sender=${sender}`);
         stompClient = Stomp.over(socket);
 
         stompClient.connect({}, () => {

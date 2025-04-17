@@ -29,6 +29,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // Cấu hình WebSocket endpoint
         registry.addEndpoint("/ws").setAllowedOrigins("https://web-production-fce3.up.railway.app/").withSockJS();
+//        registry.addEndpoint("/ws").setAllowedOrigins("http://localhost:8080/").withSockJS();
     }
 
 
