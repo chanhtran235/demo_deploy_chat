@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spring Boot WebSocket Example</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>WebSocket với Spring Boot</h1>
+<div id="messages"></div>
+<input type="text" id="messageInput" placeholder="Nhập tin nhắn">
+<button onclick="sendMessage()">Gửi</button>
+
+<script>
+    let stompClient;
+
+    // Kết nối WebSocket
+    const connect = () => {
+        // Kết nối SockJS tới server Tomcat
+        const socket = new SockJS('http://localhost:8080/ws'); // Đảm bảo URL đúng với cấu hình của server
+        stompClient = Stomp.over(chatGroup);
+
+        stompClient.connect({}, () => {
+            console.log('Kết nối thành công!');
+
+            // Subscribe topic /topic/messages
+            stompClient.subscribe('/topic/messages', (message) => {
+                console.log("========client nhận=====================")
+                const messagesDiv = document.getElementById('messages');
+                const newMessage = document.createElement('div');
+                newMessage.innerHTML = message.body;
+                messagesDiv.appendChild(newMessage);
+            });
+        });
+    };
+
+    // Gửi tin nhắn
+    const sendMessage = () => {
+        const message = document.getElementById('messageInput').value;
+        stompClient.send('/app/group-chat', {}, message);
+    };
+
+    connect();
+</script>
+</body>
+</html>

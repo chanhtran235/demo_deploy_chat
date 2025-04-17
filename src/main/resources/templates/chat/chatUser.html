@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Application</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.0/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+</head>
+<body>
+<h1>Chat Application</h1>
+<div>
+    <label>From:</label>
+    <input type="text" id="sender" th:value="${username}" placeholder="Your name">
+</div>
+<div>
+    <label>To:</label>
+    <input readonly type="text" id="recipient" value="admin" placeholder="Recipient name">
+</div>
+<div>
+    <textarea id="messageInput" placeholder="Enter your message"></textarea>
+</div>
+<button onclick="sendMessage()">Send</button>
+
+<h2>Messages:</h2>
+<div id="messages"></div>
+
+<script>
+    let stompClient;
+    const sender = document.getElementById("sender").value;
+    const recipient = document.getElementById('recipient').value;
+    const messagesDiv = document.getElementById('messages');
+
+    // Kết nối WebSocket
+    const connect = () => {
+        const socket = new SockJS(`http://localhost:8080/ws?sender=${sender}`);
+        stompClient = Stomp.over(socket);
+
+        stompClient.connect({}, () => {
+            console.log('Connected to WebSocket as:', sender);
+            stompClient.subscribe(`/user/queue/messages`, (message) => {
+                console.log("Received message: ", message.body);
+                // lấy dữ liệu hiển thị lên cửa sổ chat
+                const receivedMess = document.createElement('div');
+                let object = message.body;
+                object = JSON.parse(object)
+                console.log("object: ------------" + object)
+                receivedMess.innerHTML = object.sender + ": "+ object.content;
+                messagesDiv.appendChild(receivedMess);
+            });
+        });
+
+    };
+
+    const sendMessage = () => {
+        const sender = document.getElementById('sender').value;
+        const recipient = document.getElementById('recipient').value;
+        const content = document.getElementById('messageInput').value;
+
+        const chatMessage = {
+            sender: sender,
+            recipient: recipient,
+            content: content
+        };
+        // hiển thị lên cửa số chat
+        const sendMess = document.createElement('div');
+        sendMess.innerHTML = chatMessage.sender + ": " + chatMessage.content;
+        messagesDiv.appendChild(sendMess);
+        console.log("Sending message: ", chatMessage);
+        // gửi tin nhắn
+        stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
+    };
+    // khi trả về trang này sẽ tự động kết nốt với socket
+    connect();
+</script>
+</body>
+</html>
