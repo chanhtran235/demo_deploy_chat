@@ -29,6 +29,8 @@
     let stompClient;
     const sender = document.getElementById("sender").value;
     const recipient = document.getElementById('recipient').value;
+    const messagesDiv = document.getElementById('messages');
+
     // Kết nối WebSocket
     const connect = () => {
         const socket = new SockJS(`https://web-production-fce3.up.railway.app/ws?sender=${sender}`);
@@ -38,13 +40,13 @@
             console.log('Connected to WebSocket as:', sender);
             stompClient.subscribe(`/user/queue/messages`, (message) => {
                 console.log("Received message: ", message.body);
-                const messagesDiv = document.getElementById('messages');
-                const newMessage = document.createElement('div');
+                // lấy dữ liệu hiển thị lên cửa sổ chat
+                const receivedMess = document.createElement('div');
                 let object = message.body;
                 object = JSON.parse(object)
                 console.log("object: ------------" + object)
-                newMessage.innerHTML = object.sender + ": "+ object.content;
-                messagesDiv.appendChild(newMessage);
+                receivedMess.innerHTML = object.sender + ": "+ object.content;
+                messagesDiv.appendChild(receivedMess);
             });
         });
 
@@ -60,11 +62,15 @@
             recipient: recipient,
             content: content
         };
-
+        // hiển thị lên cửa số chat
+        const sendMess = document.createElement('div');
+        sendMess.innerHTML = chatMessage.sender + ": " + chatMessage.content;
+        messagesDiv.appendChild(sendMess);
         console.log("Sending message: ", chatMessage);
-
+        // gửi tin nhắn
         stompClient.send('/app/chat', {}, JSON.stringify(chatMessage));
     };
+    // khi trả về trang này sẽ tự động kết nốt với socket
     connect();
 </script>
 </body>
